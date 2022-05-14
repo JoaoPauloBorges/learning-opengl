@@ -4,47 +4,10 @@
 #include <iostream>
 #include "Shader-setup.h"
 #include "GLDebugMessageCallback.h"
+#include "VertexBuffer.h"
+#include "indexBuffer.h"
+#include "VertexArray.h"
 
-
-void drawSquare() {
-	//defining the vertex buffer
-	float positions[] = {
-		-.5f, -.5f,
-		 .5f, -.5f,
-		 .5f, .5f,
-		-.5f, .5f,
-	};
-
-	unsigned int index[] = {
-		0,1,2,
-		2,3,0
-	};
-
-	unsigned int buffer;
-	glGenBuffers(1, &buffer);
-	glBindBuffer(GL_ARRAY_BUFFER, buffer);
-	//passing data to the buffer
-	glBufferData(GL_ARRAY_BUFFER, 4 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
-
-	// defining index 
-	unsigned int indexBufferObject;
-	glGenBuffers(1, &indexBufferObject);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, indexBufferObject);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), index, GL_STATIC_DRAW);
-
-	// defining the layout of the buffer (what each part of the arrays represents, and their sizes in the array)
-	// VERTEX is the group of attributes that define a point, like position, texture mapping and normals
-	// 
-	// @params
-	// index: "index of the vertex" ,
-	// size: "how many positions in the buffer represents the attributes"
-	// type: "type of the data",
-	// normalyzed: "booleand that indicates if tha data have to be normalized"
-	// stride: "the total (including all attributes) amount of bytes between each vertex",
-	// pointer: "amount of bytes to reach the next attr"
-	glVertexAttribPointer(0, 2, GL_FLOAT, false, sizeof(float) * 2, 0);
-	glEnableVertexAttribArray(0);
-}
 
 void drawTriangle() {
 
@@ -63,10 +26,51 @@ void drawTriangle() {
 	glEnableVertexAttribArray(0);
 }
 
-void draw() {
-	//glDrawArrays(GL_TRIANGLES, 0, 3);
-	glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr); ////"drawing with index"
-};
+void calcAnimation(float& r, float& inc) {
+	if (r > 1.) {
+		inc = -.05;
+	}
+	if (r < 0.) {
+		inc = .05;
+	}
+	r += inc;
+}
+
+VertexArray* DrawSquare() {
+	VertexArray* VAO = new VertexArray;
+	VAO->Bind(); //all VBO en IBO have to be created while VAO is on bound
+
+	float positions[] = {
+	-.5f, -.5f,
+	 .5f, -.5f,
+	 .5f, .5f,
+	-.5f, .5f,
+	};
+	VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+
+	VertexBufferLayout layout;
+	layout.Push({ GL_FLOAT,  2, GL_FALSE });
+
+	VAO->AddBuffer(vb, layout);
+
+	unsigned int index[] = {
+		0,1,2,
+		2,3,0
+	};
+	IndexBuffer idxb(index, 6);
+
+	VAO->AddIdxBuffer(idxb);
+
+
+	VAO->Unbind();
+	return VAO;
+}
+
+void deleteOpenGLObjects(std::vector<VertexArray*> vaoDestructionList) {
+	for (auto vrtxArray : vaoDestructionList) {
+		delete vrtxArray;
+	}
+}
 
 int main(void)
 {
@@ -78,8 +82,7 @@ int main(void)
 		exit(-1);
 	}
 
-	// Enables debugging of openGL context
-	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE);
+	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GLFW_TRUE); // Enables debugging of openGL context
 
 	/* Create a windowed mode window and its OpenGL context */
 	window = glfwCreateWindow(1920, 1080, "Triangle", NULL, NULL);
@@ -92,6 +95,8 @@ int main(void)
 	/* Make the window's context current */
 	glfwMakeContextCurrent(window);
 
+	//glfwSwapInterval(1);
+
 	/* Initialize glew (MUST BE AFTER context initialization)*/
 	if (glewInit() != GLEW_OK)
 		std::cout << "Error Initializing GLEW!\n";
@@ -101,27 +106,71 @@ int main(void)
 	glEnable(GL_DEBUG_OUTPUT);
 	glDebugMessageCallback(GLDebugMessageCallback, NULL);
 
-	unsigned int shaders = SetupShaders();
 
-	drawSquare();
-
-	/* Loop until the user closes the window */
-	while (!glfwWindowShouldClose(window))
+	//--------------------------------------------------------------------------------------------------------------
 	{
-		/* Render here */
+		//VertexArray VAO;
+		//VAO.Bind(); //all VBO en IBO have to be created while VAO is on bound
+
+		//float positions[] = {
+		//-.5f, -.5f,
+		// .5f, -.5f,
+		// .5f, .5f,
+		//-.5f, .5f,
+		//};
+		//VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+
+		//VertexBufferLayout layout;
+		//layout.Push({ GL_FLOAT,  2, GL_FALSE });
+
+		//VAO.AddBuffer(vb, layout);
+
+		//unsigned int index[] = {
+		//0,1,2,
+		//2,3,0
+		//};
+		//IndexBuffer idxb(
+		//	index, 6);
+
+		//VAO.Unbind();
+	}
+	//--------------------------------------------------------------------------------------------------------------
+
+	std::vector< VertexArray*> vaoDestructionList;
+	VertexArray* vaoSquare = DrawSquare();
+
+	vaoDestructionList.push_back(vaoSquare);
+
+	unsigned int shadersProgram = SetupShaders();
+
+	int u_MyColorLocation = glGetUniformLocation(shadersProgram, "u_MyColor");
+	glUseProgram(0); //clear program in use;
+
+	//------
+	float r = 0.;
+	float inc = .05;
+	//------
+
+	while (!glfwWindowShouldClose(window))	/* Loop until the user closes the window */
+	{
+		//processInput(window);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		draw();
+		glUseProgram(shadersProgram);
+		glUniform4f(u_MyColorLocation, .5, r, 1., 1.);
 
-		/* Swap front and back buffers */
-		glfwSwapBuffers(window);
+		vaoSquare->Bind();
+		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr); ////"drawing with index"
 
-		/* Poll for and process events */
-		glfwPollEvents();
+		calcAnimation(r, inc);
+
+		glfwSwapBuffers(window);	/* Swap front and back buffers */
+
+		glfwPollEvents();	/* Poll for and process events */
 	}
 
-	glDeleteProgram(shaders);
-
+	glDeleteProgram(shadersProgram);
+	deleteOpenGLObjects(vaoDestructionList);
 	glfwTerminate();
 	return 0;
 }
