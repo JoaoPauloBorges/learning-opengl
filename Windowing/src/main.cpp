@@ -2,11 +2,12 @@
 #include <GL/glew.h> //bring the openGl header functions in the right version of the hardware
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "Shader-setup.h"
+#include <string>
 #include "GLDebugMessageCallback.h"
 #include "VertexBuffer.h"
 #include "indexBuffer.h"
 #include "VertexArray.h"
+#include "Shader.h"
 
 
 void drawTriangle() {
@@ -26,14 +27,11 @@ void drawTriangle() {
 	glEnableVertexAttribArray(0);
 }
 
-void calcAnimation(float& r, float& inc) {
-	if (r > 1.) {
-		inc = -.05;
+float calcAnimation(float& a, float& inc) {
+	if (a > 1. || a < 0.) {
+		inc *= -1;
 	}
-	if (r < 0.) {
-		inc = .05;
-	}
-	r += inc;
+	return a += inc;
 }
 
 VertexArray* DrawSquare() {
@@ -141,35 +139,32 @@ int main(void)
 
 	vaoDestructionList.push_back(vaoSquare);
 
-	unsigned int shadersProgram = SetupShaders();
+	Shader basicShader("assets/shaders/vs.shader", "assets/shaders/fs.shader");
 
-	int u_MyColorLocation = glGetUniformLocation(shadersProgram, "u_MyColor");
 	glUseProgram(0); //clear program in use;
 
 	//------
-	float r = 0.;
+	float green = 0.;
 	float inc = .05;
 	//------
-
 	while (!glfwWindowShouldClose(window))	/* Loop until the user closes the window */
 	{
 		//processInput(window);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glUseProgram(shadersProgram);
-		glUniform4f(u_MyColorLocation, .5, r, 1., 1.);
+		basicShader.Bind();
+
+		basicShader.SetUniform4f("u_MyColor", .5, calcAnimation(green, inc), 1., 1.);
 
 		vaoSquare->Bind();
 		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr); ////"drawing with index"
 
-		calcAnimation(r, inc);
 
 		glfwSwapBuffers(window);	/* Swap front and back buffers */
 
 		glfwPollEvents();	/* Poll for and process events */
 	}
 
-	glDeleteProgram(shadersProgram);
 	deleteOpenGLObjects(vaoDestructionList);
 	glfwTerminate();
 	return 0;

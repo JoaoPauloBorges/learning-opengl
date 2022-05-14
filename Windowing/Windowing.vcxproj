@@ -144,6 +144,7 @@
     <ClCompile Include="src\GLDebugMessageCallback.cpp" />
     <ClCompile Include="src\IndexBuffer.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\VertexArray.cpp" />
     <ClCompile Include="src\VertexBuffer.cpp" />
   </ItemGroup>
@@ -151,6 +152,7 @@
     <ClInclude Include="src\GLDebugMessageCallback.h" />
     <ClInclude Include="src\IndexBuffer.h" />
     <ClInclude Include="src\Shader-setup.h" />
+    <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\Util.h" />
     <ClInclude Include="src\VertexArray.h" />
     <ClInclude Include="src\VertexBuffer.h" />
