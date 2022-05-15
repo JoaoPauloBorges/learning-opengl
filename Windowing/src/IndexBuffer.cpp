@@ -11,14 +11,14 @@ IndexBuffer::IndexBuffer(const unsigned int* data, unsigned int count):
 }
 
 IndexBuffer::~IndexBuffer() {
-	std::cout << "calling IndexBuffer Destructor" << std::endl;
+	std::cout << "~IndexBuffer" << std::endl;
 }
 
-void IndexBuffer::DeleteOpenGLBuffer() {
-	std::cout << "deleting IndexBuffer" << std::endl;
+void IndexBuffer::Dispose()
+{
+	std::cout << "Disposing IndexBuffer" << std::endl;
 	glDeleteBuffers(1, &m_RendererId);
 }
-
 
 void IndexBuffer::Bind() const {
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_RendererId);

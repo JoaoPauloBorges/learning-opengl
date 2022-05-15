@@ -1,3 +1,4 @@
+#pragma once
 #include "Shader.h"
 #include <GL/glew.h>
 #include <iostream>
@@ -7,15 +8,15 @@ Shader::Shader(const std::string& vsFilePath, const std::string& fsFilePath) :
 	vertexShaderFilePath(vsFilePath),
 	fragmentShaderFilePath(fsFilePath)
 {
-	std::string vertexShader = loadfile(vertexShaderFilePath);
-	std::string fragmentShader = loadfile(fragmentShaderFilePath);
+	std::string vertexShader = Util::loadfile(vertexShaderFilePath);
+	std::string fragmentShader = Util::loadfile(fragmentShaderFilePath);
 
 	m_RendererId = CreateProgramWithShaders(vertexShader, fragmentShader);
 }
 
 Shader::~Shader() {
-	std::cout << "Calling Shader Destroyer and Deletign OpenGl shaders program" << std::endl;
-	glDeleteProgram(m_RendererId);
+	std::cout << "~Shader" << std::endl;
+	Dispose();
 }
 
 
@@ -63,11 +64,27 @@ void Shader::SetUniform4f(const std::string& uniform_name, float v0, float v1, f
 	glUniform4f(GetUniformLocation(uniform_name), v0, v1, v2, v3);
 }
 
-void Shader::Bind() {
+void Shader::SetUniform1i(const std::string& uniform_name, int value)
+{
+	glUniform1i(GetUniformLocation(uniform_name), value);
+}
+
+void Shader::SetUniform1f(const std::string& uniform_name, float value)
+{
+	glUniform1f(GetUniformLocation(uniform_name), value);
+}
+
+void Shader::Dispose()
+{
+	std::cout << "Disposing Shader" << std::endl;
+	glDeleteProgram(m_RendererId);
+}
+
+void Shader::Bind() const {
 	glUseProgram(m_RendererId);
 }
 
-void Shader::Unbind() {
+void Shader::Unbind() const {
 	glUseProgram(0);
 }
 

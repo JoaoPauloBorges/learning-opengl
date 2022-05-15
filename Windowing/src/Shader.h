@@ -1,8 +1,10 @@
 #pragma once
 #include <string>
 #include <unordered_map>
+#include "OpenGLDisposable.h"
 
-class Shader {
+
+class Shader: public OpenGLDisposable {
 private:
 	unsigned int m_RendererId;
 
@@ -20,10 +22,16 @@ public:
 	Shader(const std::string& vertexShaderFilePath, const std::string& fragmentShaderFilePath);
 	~Shader();
 
-	void Bind();
-	void Unbind();
+	void Bind() const;
+	void Unbind() const;
 	void SetUniform4f(const std::string& uniform_name, float v0, float v1, float v2, float v3);
+	void SetUniform1i(const std::string& uniform_name, int value);
+	void SetUniform1f(const std::string& uniform_name, float value);
 
 
+
+
+	// Inherited via OpenGLDisposable
+	virtual void Dispose() override;
 
 };

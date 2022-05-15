@@ -9,11 +9,12 @@ VertexBuffer::VertexBuffer(const void* data, unsigned int size) {
 }
 
 VertexBuffer::~VertexBuffer() {
-	std::cout << "calling VertexBuffer destructor" << std::endl;
+	std::cout << "~VertexBuffer" << std::endl;
 }
 
-void VertexBuffer::DeleteOpenGLBuffer() {
-	std::cout << "deleting vrtx buffer" << std::endl;
+void VertexBuffer::Dispose()
+{
+	std::cout << "Disposing IndexBuffer" << std::endl;
 	glDeleteBuffers(1, &m_RendererId);
 }
 

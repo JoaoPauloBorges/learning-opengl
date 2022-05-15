@@ -1,6 +1,8 @@
 #pragma once
+#include "OpenGLDisposable.h"
 
-class IndexBuffer {
+
+class IndexBuffer: public OpenGLDisposable {
 private:
 	unsigned int m_RendererId;
 	unsigned int m_Count;
@@ -13,5 +15,6 @@ public:
 
 	inline unsigned int GetCount() const { return m_Count; }
 
-	void DeleteOpenGLBuffer();
+	// Inherited via OpenGLDisposable
+	virtual void Dispose() override;
 };

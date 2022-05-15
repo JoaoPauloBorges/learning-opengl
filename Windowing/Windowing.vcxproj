@@ -141,26 +141,44 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\objectDrawers\SquareDrawer.cpp" />
+    <ClCompile Include="src\objectDrawers\HouseDrawer.cpp" />
+    <ClCompile Include="src\objectDrawers\ObjectDrawer.cpp" />
     <ClCompile Include="src\GLDebugMessageCallback.cpp" />
     <ClCompile Include="src\IndexBuffer.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Shader.cpp" />
     <ClCompile Include="src\VertexArray.cpp" />
     <ClCompile Include="src\VertexBuffer.cpp" />
+    <ClCompile Include="src\Texture.cpp" />
+    <ClCompile Include="third-party\STB\stb_image.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\objectDrawers\SquareDrawer.h" />
+    <ClInclude Include="src\objectDrawers\HouseDrawer.h" />
+    <ClInclude Include="src\objectDrawers\ObjectDrawer.h" />
+    <ClInclude Include="src\Bootstrap.h" />
     <ClInclude Include="src\GLDebugMessageCallback.h" />
     <ClInclude Include="src\IndexBuffer.h" />
+    <ClInclude Include="src\OpenGLDisposable.h" />
+    <ClInclude Include="src\Renderer.h" />
     <ClInclude Include="src\Shader-setup.h" />
     <ClInclude Include="src\Shader.h" />
     <ClInclude Include="src\Util.h" />
     <ClInclude Include="src\VertexArray.h" />
     <ClInclude Include="src\VertexBuffer.h" />
     <ClInclude Include="src\VertexBufferLayout.h" />
+    <ClInclude Include="src\Texture.h" />
+    <ClInclude Include="third-party\STB\stb_image.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="assets\shaders\fs.shader" />
+    <None Include="assets\shaders\Texture\fsTexture.shader" />
     <None Include="assets\shaders\vs.shader" />
+    <None Include="assets\shaders\Texture\vsTexture.shader" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="assets\textures\dolly_texture.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

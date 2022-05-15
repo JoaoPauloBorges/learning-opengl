@@ -1,6 +1,8 @@
 #pragma once
+#include "OpenGLDisposable.h"
 
-class VertexBuffer {
+
+class VertexBuffer: public OpenGLDisposable {
 private:
 	unsigned int m_RendererId;
 public:
@@ -10,5 +12,6 @@ public:
 	void Bind() const;
 	void Unbind() const;
 
-	void DeleteOpenGLBuffer();
+	// Inherited via OpenGLDisposable
+	virtual void Dispose() override;
 };
